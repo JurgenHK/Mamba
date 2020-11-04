@@ -2,13 +2,16 @@
 <launch>
 
     <!-- Load and parse robot model -->
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mamba_description)/urdf/mamba_gazebo.urdf.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mamba_desktop)/urdf/mamba_gazebo.urdf.xacro'" />
 
     <!-- Robot State Publisher -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>  
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+	
+	<!-- Joint State Publisher -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
     <!-- Load controllers configuration-->
-    <rosparam file="$(find mamba_description)/config/controller_def.yaml" command="load"/>
+    <rosparam file="$(find mamba_desktop)/config/controller_def.yaml" command="load"/>
 
     <!-- Load controllers -->
     <node 
@@ -47,7 +50,7 @@
     />
 
     <!-- RVIZ Visualization --> 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mamba_description)/config/config_gazebo.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mamba_desktop)/config/config_gazebo.rviz"/>
 
     <!-- RQT Steering -->
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">

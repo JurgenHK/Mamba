@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <robot name="mamba" xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<!-- Include RealSense Camera -->
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
+
+    <!-- Create camera link and joint -->
+    <xacro:sensor_d435 parent="base_link">
+    	<origin xyz="0 0 0.15" rpy="0 0 0"/>
+    </xacro:sensor_d435>
+
 	<!-- Robot parameters -->
 	<xacro:property name="wheel_radius" value="0.033"/>
 	<xacro:property name="wheel_distance" value="0.12"/>
