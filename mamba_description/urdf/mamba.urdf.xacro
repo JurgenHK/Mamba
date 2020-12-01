@@ -6,7 +6,7 @@
 
     <!-- Create camera link and joint -->
     <xacro:sensor_d435 parent="base_link">
-    	<origin xyz="0 0 0.15" rpy="0 0 0"/>
+    	<origin xyz="-0.0733 0 0.2365" rpy="0 0 0"/>
     </xacro:sensor_d435>
 
 	<!-- Robot parameters -->
@@ -30,15 +30,15 @@
 	<!-- base link, basically the body of the Roomba -->
 	<link name="base_link">
 		<inertial>
-	     		<mass value="2" />
-	      		<origin xyz="0 0 0.0" />
-	      		<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5" />
+	     		<mass value="4" />
+	      		<origin xyz="0 0 0.0358" />
+	      		<inertia ixx="0.0288" ixy="0.0" ixz="0.0" iyy="0.0288" iyz="0.0" izz="0.0543" />
 	 	</inertial>
 	
 	    	<visual>
-	      		<origin xyz=" 0 0 0.0308" rpy="0 0 1.5708" />
+	      		<origin xyz=" 0 0 -0.017" rpy="0 0 0" />
 	      		<geometry>
-	        		<mesh filename="package://mamba_description/meshes/black_roomba.dae"/>
+	        		<mesh filename="package://mamba_description/meshes/Mamba_No_Camera.dae"/>
 	      		</geometry>
 	    	</visual>
 	
@@ -209,10 +209,10 @@
 	<link name="caster_wheel_link">
 		<inertial>
 	      		<origin xyz="0 0 0" />
-	      		<mass value="0.01" />
+	      		<mass value="0.072" />
 	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
 	    	</inertial>
-	
+			<!--
 	    	<visual>
 	      		<origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
 	      		<geometry>
@@ -220,7 +220,7 @@
 	      		</geometry>
 			<material name="DarkGray" />
 	    	</visual>
-	
+			-->
 	    	<collision>
 	      		<origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
 	      		<geometry>
