@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mamba_bringup</name>
+  <version>1.0.0</version>
+  <description>roslaunch scripts for starting Mamba</description>
+
+  <maintainer email="jhkrejcim@unal.edu.co">JurgenHK</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="website">https://github.com/JurgenHK/Mamba</url> 
+
+  <author email="jhkrejcim@unal.edu.co">Jurgen Krejci</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>create_description</build_depend>
+  <build_depend>create_driver</build_depend>
+  <build_depend>joint_state_publisher</build_depend>
+  <build_depend>realsense2_camera</build_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_export_depend>create_description</build_export_depend>
+  <build_export_depend>create_driver</build_export_depend>
+  <build_export_depend>joint_state_publisher</build_export_depend>
+  <build_export_depend>realsense2_camera</build_export_depend>
+  <build_export_depend>robot_state_publisher</build_export_depend>
+  <exec_depend>create_description</exec_depend>
+  <exec_depend>create_driver</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+
+  <export>
+
+  </export>
+
+</package>

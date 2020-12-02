@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Launch parameters -->
+    <arg name="rviz" default="false"/>
+    <arg name="camera" default="true"/>
+
+    <!-- iRobot Create 2 Node -->
+    <arg name="config" default="$(find mamba_bringup)/config/mamba_default.yaml" /> 
+
+    <node name="create_driver" pkg="create_driver" type="create_driver" output="screen">
+        <rosparam command="load" file="$(arg config)" />
+        <param name="robot_model" value="CREATE_2" />
+    </node>
+
+    <!-- Load and parse robot model -->
+ 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mamba_description)/urdf/mamba.urdf.xacro'" />
+	
+	<!-- Robot State Publisher -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+	
+	<!-- Joint State Publisher -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+    <!-- Depth Camera (Realsense) -->
+    <include if="$(arg camera)" file="$(find realsense2_camera)/launch/rs_rgbd.launch"/>
+
+	<!-- Visualization / RViz -->
+	<node if="$(arg rviz)" name="rviz_visualization" pkg="rviz" type="rviz" args=" -d $(find mamba_bringup)/config/config.rviz"/>
+
+</launch>
