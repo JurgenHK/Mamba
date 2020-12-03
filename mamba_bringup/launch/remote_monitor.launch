@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- RQT Steering -->
+    <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+        <param name="default_topic" value="/mobile_base_controller/cmd_vel"/> 
+    </node> 
+
+	<!-- Visualization / RViz -->
+	<node name="rviz_visualization" pkg="rviz" type="rviz" args=" -d $(find mamba_bringup)/config/remote.rviz"/>
+
+</launch>
