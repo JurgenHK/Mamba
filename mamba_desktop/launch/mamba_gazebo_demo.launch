@@ -24,16 +24,30 @@
         mobile_base_controller"
     />
 
-    <!-- Gazebo Initialization -->
-    <include file="$(find gazebo_ros)/launch/shapes_world.launch">
-        <!--<arg name="use_sim_time" value="true"/>-->
-    </include> 
+    <!-- Gazebo Initialization  (Shapes World)
+    <include file="$(find gazebo_ros)/launch/shapes_world.launch"> 
+    
+    </include> -->
+
+    <!-- Gazebo Initialization (Load World) -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <!--
+        <arg name="world_name" value="$(find aws_robomaker_racetrack_world)/worlds/racetrack_day.world"/> 
+        -->
+        <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/>
+        
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="false"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
 
     <!-- Spawn position -->
-
-    <arg name="x" default="2"/>
-	<arg name="y" default="0"/>
-	<arg name="th" default="3.1416"/>
+    <arg name="x" default="0"/>   <!-- Shapes world: 2 -->
+	<arg name="y" default="-15"/>   <!-- Shapes world: 0 -->
+    <arg name="z" default="0.2"/>    <!-- Shapes world: 0 -->
+	<arg name="th" default="0"/>    <!-- Shapes world: 3.1416 -->
 
     <!-- Spawn robot model -->
     <node 
@@ -45,7 +59,8 @@
                 -urdf
                 -model mamba 
                 -x $(arg x) 
-                -y $(arg y) 
+                -y $(arg y)
+                -z $(arg z)
                 -Y $(arg th)"
     />
 

@@ -10,6 +10,7 @@
 	<!-- Joint State Publisher -->
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 	
+
 	<!-- Visualization / RViz -->
 	<node name="rviz" pkg="rviz" type="rviz" args=" -d $(find mamba_description)/config/config_visual.rviz"/>
 

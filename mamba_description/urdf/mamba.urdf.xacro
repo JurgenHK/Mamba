@@ -1,53 +1,82 @@
 <?xml version="1.0"?>
+<!-- 
+	UNIVERSIDAD NACIONAL DE COLOMBIA 			
+	DEPT. DE INGENIERIA MECANICA Y MECATRONICA 
+	ROBOTICA MOVIL / LABSIR  					
+
+	FINAL GRADE PROYECT / "MAMBA" AN IROBOT CREATE 2 MOD 
+	AUTHOR: JURGEN H. KREJCI MUNOZ 
+	TUTOR: PEDRO CARDENAS HERRERAS
+	MAIL: jhkrejcim@unal.edu.co
+
+	ROBOT: MAMBA
+	VERSION: 1.0
+	TESTED ON ROS MELODIC (UBUNTU 18.04 LTS)
+	REPOSITORY: https://github.com/JurgenHK/Mamba
+
+	iRobot Create 2 URDF DESCRIPTION BASED ON: 
+	* AutonomyLab's create_robot 
+	https://github.com/AutonomyLab/create_robot/tree/melodic/create_description
+
+	* goncabrita's roomba_robot
+	https://github.com/goncabrita/roomba_robot
+-->
 <robot name="mamba" xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<!-- Include RealSense Camera -->
+	<!-- Include RealSense Camera description -->
     <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
-
-    <!-- Create camera link and joint -->
-    <xacro:sensor_d435 parent="base_link">
-    	<origin xyz="-0.0733 0 0.2365" rpy="0 0 0"/>
-    </xacro:sensor_d435>
 
 	<!-- Robot parameters -->
 	<xacro:property name="wheel_radius" value="0.033"/>
 	<xacro:property name="wheel_distance" value="0.12"/>
+	<xacro:property name="camera_height" value="0.1"/>
 
-	<material name="DarkGray">
-          <color rgba="0.2 0.2 0.2 1.0"/>
-    </material>
-	
-	<!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
+    <!-- Create camera link and joint -->
+	<!-- 
+		SETTING CAMERA HEIGHT:
+		"camera_height" is considered from the profile plate upwards
+		The full distance from the grpud is obtained adding to camera_height the following:
+		+ Distance from the ground to the profile plate -> 0.1115
+		+ Distance from the border of the camera supports to the screw frame -> 0.015
+		- Distace from the ground to the "base_link" position -> 0.017 (This last one is added negative)
+	-->
+    <xacro:sensor_d435 parent="base_link">
+    	<origin xyz="-0.0733 0 ${0.1115-0.017+0.015+camera_height}" rpy="0 0 0"/>
+    </xacro:sensor_d435>
+
+	<!-- Base Footprint -->
+	<!-- Fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
 	<link name="base_footprint">
 	 	<collision>
-	      		<origin xyz="0 0 0" rpy="0 0 0" />
-	      		<geometry>
-	        		<cylinder length="0" radius="0.16495"/>
-	     	 	</geometry>
-	    	</collision>
+	      	<origin xyz="0 0 0" rpy="0 0 0" />
+	      	<geometry>
+	        	<cylinder length="0" radius="0.16495"/>
+	     	</geometry>
+	    </collision>
 	</link>
 	
-	<!-- base link, basically the body of the Roomba -->
+	<!-- Base link -->
+	<!-- Basically the body of the Mamba (Roomba) -->
 	<link name="base_link">
 		<inertial>
-	     		<mass value="4" />
-	      		<origin xyz="0 0 0.0358" />
-	      		<inertia ixx="0.0288" ixy="0.0" ixz="0.0" iyy="0.0288" iyz="0.0" izz="0.0543" />
+	     	<mass value="4" />
+	      	<origin xyz="0 0 0.0358" />
+	      	<inertia ixx="0.0288" ixy="0.0" ixz="0.0" iyy="0.0288" iyz="0.0" izz="0.0543" />
 	 	</inertial>
 	
-	    	<visual>
-	      		<origin xyz=" 0 0 -0.017" rpy="0 0 0" />
-	      		<geometry>
-	        		<mesh filename="package://mamba_description/meshes/Mamba_No_Camera.dae"/>
-	      		</geometry>
-	    	</visual>
+	    <visual>
+	      	<origin xyz=" 0 0 -0.017" rpy="0 0 0" />
+	      	<geometry>
+	        	<mesh filename="package://mamba_description/meshes/Mamba_No_Camera.dae"/>
+	      	</geometry>
+	    </visual>
 	
-	    	<collision>
-	      		<origin xyz="0.0 0.0 0.0358" rpy="0 0 0" />
-	      		<geometry>
-	        		<cylinder length="0.0711632" radius="0.16495"/>
-	     	 	</geometry>
-	    	</collision>
+	    <collision>
+	      	<origin xyz="0.0 0.0 0.0358" rpy="0 0 0" />
+	      	<geometry>
+	        	<cylinder length="0.0711632" radius="0.16495"/>
+	     	</geometry>
+	    </collision>
 	</link>
 
 	<joint name="base_footprint_joint" type="fixed">
@@ -55,45 +84,82 @@
 		<parent link="base_footprint"/>
 	 	<child link="base_link" />
 	</joint>
-	
 
-	<!-- cliff sensors -->
+	<!-- Camera Supports -->
+	<!-- Support parts for holding the Realsense camera in place -->
+	<link name="camera_supports">
+		<inertial>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<mass value="0.0"/>
+			<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+		</inertial>
+		<visual name="">
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry>
+	        		<mesh filename="package://mamba_description/meshes/Camera_Supports.dae"/>
+	      	</geometry>
+		</visual>
+		<collision>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry>
+				<box size="0.095 0.038 0.055"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<!-- 
+		SETTING CAMERA SUPPORTS HEIGHT:
+		"camera_height" is considered from the profile plate upwards
+		The full distance from the grpud is obtained adding to camera_height the following:
+		+ Distance from the ground to the profile plate -> 0.1115
+		+ Distance from the border of the camera supports to their coordinate center -> 0.0275
+		- Distace from the ground to the "base_link" position -> 0.017 (This last one is added negative)
+	-->
+
+	<joint name="camera_supports_joint" type="fixed">
+		<origin xyz="-0.1025 0 ${0.1115-0.017+0.0275+camera_height}" rpy="0 0 ${-1*pi/2}" />        
+		<parent link="base_link"/>
+	 	<child link="camera_supports" />
+	</joint>
+
+	<!-- Cliff sensors -->
+	<!-- Just the cordinate frames (No visual/collision properties), Used for TF and Gazebo sim -->
 	<link name="left_cliff_sensor_link">
 		<inertial>
 			<mass value="0.01" />
 	  		<origin xyz="0 0 0"/>
-	     		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	     	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
 	   	</inertial>
 	</link>
 	
 	<link name="right_cliff_sensor_link">
 	 	<inertial>
-	     		<mass value="0.01" />
-	    		<origin xyz="0 0 0"/>
-	    		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
+	     	<mass value="0.01" />
+	    	<origin xyz="0 0 0"/>
+	    	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
 	</link>
 	
 	<link name="front_left_cliff_sensor_link">
 	 	<inertial>
-	     		<mass value="0.01" />
-	      		<origin xyz="0 0 0"/>
-	      		<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
-	    	</inertial>
+	     	<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+	    </inertial>
 	</link>
 	
-	 <link name="front_right_cliff_sensor_link">
+	<link name="front_right_cliff_sensor_link">
 		<inertial>
-	     		<mass value="0.01" />
-	      		<origin xyz="0 0 0"/>
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
+	     	<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
 	</link>
 	
 	<joint name="left_sensor_joint" type="fixed">
 	  	<origin xyz="0.07 0.14 0.01" rpy="0 1.57079 0" />        
-	    	<parent link="base_link"/>
-	    	<child link="left_cliff_sensor_link" />
+	    <parent link="base_link"/>
+	    <child link="left_cliff_sensor_link" />
 	</joint>
 	
 	<joint name="right_cliff_sensor_joint" type="fixed">
@@ -103,137 +169,203 @@
 	</joint>
 	
 	<joint name="front_left_cliff_sensor_joint" type="fixed">
-	    	<origin xyz="0.15 0.04 0.01" rpy="0 1.57079 0" />        
-	    	<parent link="base_link"/>
-	    	<child link="front_left_cliff_sensor_link" />
+	    <origin xyz="0.15 0.04 0.01" rpy="0 1.57079 0" />        
+	    <parent link="base_link"/>
+	    <child link="front_left_cliff_sensor_link" />
 	</joint>
 	
 	<joint name="front_right_cliff_sensor_joint" type="fixed">
-	    	<origin xyz="0.15 -0.04 0.01" rpy="0 1.57079 0" />        
-	    	<parent link="base_link"/>
-	    	<child link="front_right_cliff_sensor_link" />
+	    <origin xyz="0.15 -0.04 0.01" rpy="0 1.57079 0" />        
+	    <parent link="base_link"/>
+	    <child link="front_right_cliff_sensor_link" />
+	</joint>
+
+	<!-- IR sensors -->
+	<!-- Just the cordinate frames (No visual/collision properties), Used for TF and Gazebo sim -->
+	<link name="left_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+	
+	<link name="front_left_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+
+	<link name="center_left_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+
+	<link name="center_right_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+
+	<link name="front_right_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+
+	<link name="right_ir_sensor_link">
+		<inertial>
+	   		<mass value="0.01" />
+	      	<origin xyz="0 0 0"/>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+	</link>
+
+	<joint name="left_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.01 0.15 0.042" rpy="0 0 1.5" />        
+	    <parent link="base_link"/>
+	    <child link="left_ir_sensor_link" />
+	</joint>
+
+	<joint name="front_left_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.09 0.12 0.042" rpy="0 0 1.0" />        
+	    <parent link="base_link"/>
+	    <child link="front_left_ir_sensor_link" />
+	</joint>
+
+	<joint name="center_left_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.15 0.04 0.042" rpy="0 0 0.4" />        
+	    <parent link="base_link"/>
+	    <child link="center_left_ir_sensor_link" />
+	</joint>
+
+	<joint name="center_right_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.15 -0.04 0.042" rpy="0 0 -0.4" />        
+	    <parent link="base_link"/>
+	    <child link="center_right_ir_sensor_link" />
+	</joint>
+
+	<joint name="front_right_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.09 -0.120 0.042" rpy="0 0 -1.0" />        
+	    <parent link="base_link"/>
+	    <child link="front_right_ir_sensor_link" />
+	</joint>
+
+	<joint name="right_ir_sensor_joint" type="fixed">
+	  	<origin xyz="0.01 -0.15 0.042" rpy="0 0 -1.5" />        
+	    <parent link="base_link"/>
+	    <child link="right_ir_sensor_link" />
 	</joint>
 
 
-	<!-- bumpers -->
+	<!-- Bumpers -->
+	<!-- Just the cordinate frames (No visual/collision properties), Used for TF and Gazebo sim -->
 	<link name="left_bumper_link">
 		<inertial>
-	   	<mass value="0.01" />
+	   		<mass value="0.01" />
 	      	<origin xyz="0 0 0"/>
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
 	</link>
 	
 	<link name="right_bumper_link">
 		<inertial>
-	   	<mass value="0.01" />
+	   		<mass value="0.01" />
 	      	<origin xyz="0 0 0"/>
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
 	</link>
 
 	<joint name="left_bumper_joint" type="fixed">
 	  	<origin xyz="0.115 -0.115 0.042" rpy="0 0 -0.75" />        
-	    	<parent link="base_link"/>
-	    	<child link="left_bumper_link" />
+	    <parent link="base_link"/>
+	    <child link="left_bumper_link" />
 	</joint>
 
 	<joint name="right_bumper_joint" type="fixed">
 	  	<origin xyz="0.115 0.115 0.042" rpy="0 0 0.75" />        
-	    	<parent link="base_link"/>
-	    	<child link="right_bumper_link" />
+	    <parent link="base_link"/>
+	    <child link="right_bumper_link" />
 	</joint>
 
 
-	<!-- wheels and caster wheel -->
-	 <link name="left_wheel_link">
+	<!-- Wheels -->
+	<!-- Left wheel-->
+	<link name="left_wheel_link">
 		<inertial>
-	      		<origin xyz="0 0 0"/>
-	      		<mass value="0.01" />
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
-	
-	    	<visual>
-	      		<origin xyz="0 0 0" rpy="0 0 0" />
-	      		<geometry>
-	        		<cylinder radius="${wheel_radius}" length = "0.023"/>
-	      		</geometry>
-			<material name="DarkGray" />
-	    	</visual>
-	
-	    	<collision>
-	      		<origin xyz="0 0 0" rpy="0 0 0" />
-	      		<geometry>
-	        		<sphere radius="${wheel_radius}"/>
-	      		</geometry>
-	    	</collision>
+	      	<origin xyz="0 0 0"/>
+	      	<mass value="0.01" />
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+
+	    <collision>
+	      	<origin xyz="0 0 0" rpy="0 0 0" />
+	      	<geometry>
+	        	<sphere radius="${wheel_radius}"/>
+	      	</geometry>
+	    </collision>
 	</link>
 	
 	<joint name="left_wheel_joint" type="continuous">
 	 	<origin xyz="0 ${wheel_distance} 0.015" rpy="${-1*pi/2} 0 0"/>
-	    	<parent link="base_link"/>
-	    	<child link="left_wheel_link"/>
-	    	<axis xyz="0 0 1"/>
-	  </joint>
+	    <parent link="base_link"/>
+	    <child link="left_wheel_link"/>
+	    <axis xyz="0 0 1"/>
+	</joint>
 	
+	<!-- Right wheel -->
 	<link name="right_wheel_link">
-	    	<inertial>
-	      		<origin xyz="0 0 0"/>
-	      		<mass value="0.01" />
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
-	
-	    	<visual>
-	      		<origin xyz="0 0 0" rpy="0 0 0" />
-	      		<geometry>
-	        		<cylinder radius="${wheel_radius}" length = "0.023"/>
-	      		</geometry>
-			<material name="DarkGray" />
-	    	</visual>
-	
+	    <inertial>
+	      	<origin xyz="0 0 0"/>
+	      	<mass value="0.01" />
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+
 	  	<collision>
-	      		<origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
-	      		<geometry>
-	        		<sphere radius="${wheel_radius}"/>
-	      		</geometry>
-	    	</collision>
+	      	<origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
+	      	<geometry>
+	        	<sphere radius="${wheel_radius}"/>
+	      	</geometry>
+	    </collision>
 	</link>
 	
 	<joint name="right_wheel_joint" type="continuous">
 	  	<origin xyz="0 ${-1*wheel_distance} 0.015" rpy="${-1*pi/2} 0 0"/>
-	    	<parent link="base_link"/>
-	    	<child link="right_wheel_link"/>
-	    	<axis xyz="0 0 1"/>
+	    <parent link="base_link"/>
+	    <child link="right_wheel_link"/>
+	    <axis xyz="0 0 1"/>
 	</joint>
 	
+	<!-- Caster wheel -->
 	<link name="caster_wheel_link">
 		<inertial>
-	      		<origin xyz="0 0 0" />
-	      		<mass value="0.072" />
-	      		<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
-	    	</inertial>
-			<!--
-	    	<visual>
-	      		<origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
-	      		<geometry>
-	        		<sphere radius="0.018" />
-	      		</geometry>
-			<material name="DarkGray" />
-	    	</visual>
-			-->
-	    	<collision>
-	      		<origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
-	      		<geometry>
-	        		<sphere radius="0.018" />
-	      		</geometry>
-	    	</collision>
+	      	<origin xyz="0 0 0" />
+	      	<mass value="0.072" />
+	      	<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+	    </inertial>
+
+	    <collision>
+	      	<origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
+	      	<geometry>
+	        	<sphere radius="0.018" />
+	      	</geometry>
+	    </collision>
 	</link>
 	
 	<joint name="caster_wheel_joint" type="fixed">
 	 	<origin xyz="0.12 0 0.0" rpy="0 0 0"/>
-	    	<parent link="base_link"/>
-	    	<child link="caster_wheel_link"/>
-	    	<axis xyz="0 1 0"/>
+	    <parent link="base_link"/>
+	    <child link="caster_wheel_link"/>
+	    <axis xyz="0 1 0"/>
 	</joint>
 
 </robot>
